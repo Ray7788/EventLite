@@ -1,0 +1,53 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+      layout:decorate="~{layouts/default}">
+<head>
+  	<title>Add Venue</title>
+</head>
+<body>
+	<div layout:fragment="content">
+	    <h1>Add Venue</h1>
+	
+	    <form action="#" th:action="@{/venues}" th:object="${venue}" method="post">
+		      <div class="form-group" th:classappend="${#fields.hasErrors('name')}? has-error">
+		        <label for="name">*Venue Name :</label>
+		        <input class="form-control" type="text" name="name" id="name" th:field="*{name}" autofocus="autofocus" />
+		        <p class="text-danger" th:if="${#fields.hasErrors('name')}" th:errors="*{name}">errors</p>
+		      </div>
+		      
+		      <div class="form-group" th:classappend="${#fields.hasErrors('capacity')}? has-error">
+		        <label for="capacity">*Capacity :</label>
+		        <input class="form-control" type="number" name="capacity" id="capacity" th:field="*{capacity}" />
+		        <p class="text-danger" th:if="${#fields.hasErrors('capacity')}" th:errors="*{capacity}">errors</p>
+		      </div>
+		
+		      <div class="form-group" th:classappend="${#fields.hasErrors('roadName')}? has-error">
+		        <label for="roadName">*Venue Road Name :</label>
+		        <input class="form-control" type="text" name="roadName" id="roadName" th:field="*{roadName}" />
+		        <p class="text-danger" th:if="${#fields.hasErrors('roadName')}" th:errors="*{roadName}">errors</p>
+		      </div>
+		      
+		      <div class="form-group" th:classappend="${#fields.hasErrors('cityName')}? has-error">
+		        <label for="cityName">*Venue City Name :</label>
+		        <input class="form-control" type="text" name="cityName" id="cityName" th:field="*{cityName}" />
+		        <p class="text-danger" th:if="${#fields.hasErrors('cityName')}" th:errors="*{cityName}">errors</p>
+		      </div>
+		      
+		      <div class="form-group" th:classappend="${#fields.hasErrors('postcode')}? has-error">
+		        <label for="post code">*Venue Postcode :</label>
+		        <input class="form-control" type="text" name="postcode" id="postcode" th:field="*{postcode}" />
+		        <p class="text-danger" th:if="${#fields.hasErrors('postcode')}" th:errors="*{postcode}">errors</p>
+		        <p class="text-danger" >Please enter a valid postcode.</p>
+		      </div>
+		
+	       	  <div class = "box-footer">
+		      <button class="btn btn-primary" type="submit"><i class="fa fa-bookmark-o" aria-hidden="true"></i>Add Venue</button>
+		      <a class="btn btn-warning" role="button" href="/venues"><i class="fa fa-ban" aria-hidden="true"></i> Cancel</a>
+	          </div>
+	
+		</form>
+	</div>
+</body>
+</html>

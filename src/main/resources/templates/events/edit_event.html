@@ -1,0 +1,97 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+      layout:decorate="~{layouts/default}">
+<head>
+  <title>All events</title>
+</head>
+<body>
+  <div layout:fragment="content">
+  <h1 class = "text-center"> Update Event </h1>
+	<form th:action="@{/events/{id} (id=${event.id})}" th:object = "${event}" method="POST">
+		<div class ="form-group" th:classappend="${#fields.hasErrors('name')}? has-error">
+			<label> Event Name </label>
+			<input
+			type = "text"
+			name = "name"
+			th:field = "*{name}"
+			id = "name"
+			class = "form-control"
+			placeholder="Enter Event Name" 
+			/>
+			<p class="text-danger" th:if="${#fields.hasErrors('name')}" th:errors="*{name}">errors</p>
+		</div>
+		<div class ="form-group">
+			<label> Event Venue </label><br>
+			<select class="custom-select" id="venue" name="venueId">
+		        <option th:each="venue : ${venues}" 
+		                th:value="${venue.id}" 
+		                th:text="${venue.name}"
+		                th:selected="${event.venue.id == venue.id}">
+		                </option>
+		    </select>
+		</div>
+		<div class ="form-group" th:classappend="${#fields.hasErrors('date')}? has-error">
+			<label> Event Date </label>
+			<input
+			type = "date"
+			name = "date"
+			id = "date"
+			th:field = "*{date}"
+			class = "form-control"
+			placeholder="Enter Event Date" 
+			/>
+			<p class="text-danger" th:if="${#fields.hasErrors('date')}" th:errors="*{date}">errors</p>
+		</div>
+		<div class ="form-group" th:classappend="${#fields.hasErrors('time')}? has-error">
+			<label> Event Time </label>
+			<input
+			type = "time"
+			name = "time"
+			id = "time"
+			th:field = "*{time}"
+			class = "form-control"
+			placeholder="Enter Event Time"
+			/> 
+						<p class="text-danger" th:if="${#fields.hasErrors('time')}" th:errors="*{time}">errors</p>
+			<button 
+			type="button" 
+			class = "btn btn-danger" 
+			th:attr="onclick=|getElementById('time').value = ''|" 
+			> 
+				Delete Time
+			</button>
+			
+		</div>
+
+
+		<div class ="form-group" th:classappend="${#fields.hasErrors('description')}? has-error">
+			<label> Event Description </label>
+			<input
+			type = "text"
+			name = "description"
+			id = "description"
+			th:field = "*{description}"
+			class = "form-control"
+			placeholder="Enter Event Description" 
+			/>
+			<p class="text-danger" th:if="${#fields.hasErrors('description')}" th:errors="*{description}">errors</p>    
+						<button 
+			type="button" 
+			class = "btn btn-danger" 
+			th:attr="onclick=|getElementById('description').value = ''|" 
+			> 
+				Delete Description
+			</button>      
+		</div>
+		<div class = "box-footer">
+			<button type="submit" class = "btn btn-primary">
+				Submit
+			</button>
+			<a class="btn btn-warning" role="button" href="/events"><i class="fa fa-ban" aria-hidden="true"></i> Cancel</a>
+		</div> 
+	</form>
+  </div>
+</body>
+</html>

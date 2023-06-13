@@ -1,0 +1,85 @@
+<!DOCTYPE HTML>
+<html 	xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+		xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+  		layout:decorate="~{layouts/default}">
+<head>
+  <title>Event Details</title>
+  <meta name="viewport" content="initial-scale=1,maximum-scale=1,user-scalable=no">
+  <link href="https://api.mapbox.com/mapbox-gl-js/v2.13.0/mapbox-gl.css" rel="stylesheet">
+  <script src="https://api.mapbox.com/mapbox-gl-js/v2.13.0/mapbox-gl.js"></script>
+</head>
+<body>
+  <div layout:fragment="content">  
+    <div class="p-3 mb-2 bg-light">  
+    <p  class="h1">
+        <b>Name:</b> <span th:text="${event.name}">Event Name</span>
+    </p>
+    <p>
+        <b>Venue:</b> <a th:text="${event.venue.name}" class="badge badge-secondary" th:href="@{/venues/{id}(id=${event.venue.id})}">Venue Name</a>
+    </p>
+    <p>
+        <b>Date:</b> <span th:text="${{event.date}}">Event Date</span>
+    </p>
+    <p>
+        <b>Time:</b> <span th:text="${{event.time}}">Event Time</span>
+    </p>
+    <p>
+        <b>Description:</b> <span th:text="${event.description}">Event Description</span>
+    </p>
+
+    <div class="d-inline">
+    <form th:action="@{/events/{num}(num=${id})}" th:method="delete">
+      <a class="btn btn-primary mx-1" role="button" th:href="@{/events}"><i class="fas fa-arrow-left" aria-hidden="true"></i>Back</a>
+      <a class="btn btn-warning mx-1" role="button" sec:authorize="isAuthenticated()" th:href="@{/events/edit/{num}(num=${id})}"><i class="fas fa-pencil-alt" aria-hidden="true"></i>Edit</a>
+      <button type="submit" class="btn btn-danger mx-1" sec:authorize="isAuthenticated()"><i class="fas fa-trash" aria-hidden="true"></i> Delete</button>
+    </form>
+    <form th:action="@{/events/edit/{num}(num=${id})}" sec:authorize="isAuthenticated()"></form>  
+    </div>
+    </div>
+
+    <th:block th:if="${error == '1'}">
+      <div class="alert alert-danger" role="alert">
+        There is something wrong with your posting
+      </div>
+    </th:block>
+    <th:block th:if="${error == '0'}">
+      <div class="alert alert-success" role="alert">
+        Your post <b>[[${content}]]</b> was posted
+      </div>
+      <script>
+        setTimeout(function() {
+          document.getElementById("mastodonShareContent").value = "";
+        }, 50);
+      </script>
+    </th:block>
+    <form th:action="@{/events/mastPost/{id}(id=${event.id})}" th:method="post" id="mastodonForm">
+      <h5><b>Share the event!</b></h5>
+      <div style="flex: 1;">
+      <input th:placeholder="${event.name}" class="form-control" type="text" th:value="${content}" name="content" id="mastodonShareContent" aria-label="content" aria-describedby="content"/>
+      </div>
+      <button type="submit" class="btn btn-dark mx-1 my-1">Submit Post</button>
+    </form>
+
+    <div id="map" style="width:100%; height:500px; margin-bottom: 40px;"></div>
+	  <script th:inline="javascript">
+	  		var event = /*[[${event}]]*/;
+		    var latitude = /*[[${event.venue.latitude}]]*/;
+		    var longitude = /*[[${event.venue.longitude}]]*/;	
+		  mapboxgl.accessToken = 'pk.eyJ1IjoiYWx0YWlzYW5tIiwiYSI6ImNsZmF3bWl6NzA5MTgzcW4xMXRod2lkOHcifQ.xwkHeSIVcmGWcvMWr8DOfQ';
+		  var map = new mapboxgl.Map({
+		              container: 'map', 
+		              style: 'mapbox://styles/mapbox/streets-v11', 
+		              center: [longitude, latitude],
+		              zoom: 13
+		          });          
+		  var popup = new mapboxgl.Popup({ offset:35 }).setHTML('<h3>' + event.name + '</h3><br><p>' + 'Starts at: '+ event.time.slice(0, 5) + '</p>');
+
+		  const marker1 = new mapboxgl.Marker()
+		  .setLngLat([longitude, latitude])
+		  .setPopup(popup)
+		  .addTo(map);		  
+	 </script>    
+    
+  </div>
+</body>
+</html>

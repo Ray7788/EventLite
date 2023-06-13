@@ -1,0 +1,148 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+      layout:decorate="~{layouts/default}">
+<head>
+  <title>Events</title>
+  <meta name="viewport" content="initial-scale=1,maximum-scale=1,user-scalable=no">
+  <link href="https://api.mapbox.com/mapbox-gl-js/v2.13.0/mapbox-gl.css" rel="stylesheet">
+  <script src="https://api.mapbox.com/mapbox-gl-js/v2.13.0/mapbox-gl.js"></script>
+<style>
+  #map { 
+    position: relative;
+    height: 650px;
+    top: 50px;
+  }
+    
+  .mapboxgl-popup {
+  max-width: 200px;
+	}
+
+  .mapboxgl-popup-content {
+    text-align: center;
+  }
+ 
+  </style>
+</head>
+<body>
+  <div layout:fragment="content">
+    <h1>Events</h1>
+    <form th:action="@{/events/searchEvents}" class="form-inline">
+        <input type="text" placeholder="Search for an event..." class="form-control rounded" name="name" id="name" size="40" th:value="${name}" required />
+        <input type="submit" class="btn btn-primary mr-sm-2" value="Find Event"/>
+        <input type="submit" class="btn btn-secondary" value="Reset" onclick="resetSearch()"/>
+    </form>
+    <script>
+      function resetSearch(){
+      	document.getElementById("name").value = "";
+        window.location = "[[@{/events}]]";	
+      }
+    </script>
+
+    <th:block th:if="${futureEvents}">
+    <h2>Upcoming events</h2>
+    <table class="table table-striped table-hover">
+      <thead>
+        <tr>
+          <th><i class="fas fa-bolt"></i> Event</th>
+          <th><i class="fas fa-calendar"></i> Date</th>
+          <th><i class="fas fa-clock"></i> Time</th>
+          <th><i class="fas fa-map-marker-alt"></i> Venue</th>
+          <th sec:authorize="isAuthenticated()"><i class="fas fa-pencil-alt"></i> Update</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr th:each="e : ${futureEvents}">
+          <td><a class="badge badge-info" th:href="@{/events/{id}(id=${e.id})}" th:text="${e.name}">Details</a></td>
+          <td th:text="${{e.date}}">Event date</td>
+          <td th:text="${{e.time}}">Event time</td>
+          <td><a th:text="${e.venue.name}" class="badge badge-secondary" th:href="@{/venues/{id}(id=${e.venue.id})}">Venue Name</a></td>
+          <td sec:authorize="isAuthenticated()">
+			    <a th:href="@{/events/edit/{id}(id=${e.id})}" class = "btn btn-info btn-sm">Update</a>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+    </th:block>
+    
+    <th:block th:if="${mastodonPosts}">
+	  <h2>Social Feed</h2>
+	  <table class="table table-striped table-hover">
+	    <thead>
+	      <tr>
+          <th><i class="fas fa-clock"></i> Time</th>
+	        <th><i class="fas fa-calendar"></i> Date</th>
+	        <th><i class="fas fa-comment"></i> Comment</th>	        
+	      </tr>
+	    </thead>
+	    <tbody>
+	      <tr th:each="post : ${mastodonPosts}">
+            <td th:text="${formatLocalDateTime.apply(post.createdAt).substring(11, 16)}">Post time</td>
+	        	<td th:text="${formatLocalDateTime.apply(post.createdAt).substring(0, 10)}">Post date</td>
+            <td>
+              <a class=""
+                 th:href="${post.url}"
+                 th:utext="${post.content}"
+                 target="_blank">
+                 </a>
+            </td>
+	      </tr>
+	    </tbody>
+	  </table>
+	</th:block>
+    
+    <th:block th:if="${pastEvents}">
+    <h2>Previous events</h2>   
+    <table class="table table-striped table-hover">
+      <thead>
+        <tr>
+          <th><i class="fas fa-bolt"></i> Event</th>
+          <th><i class="fas fa-calendar"></i> Date</th>
+          <th><i class="fas fa-clock"></i> Time</th>
+          <th><i class="fas fa-map-marker-alt"></i> Venue</th>
+          <th sec:authorize="isAuthenticated()"><i class="fas fa-pencil-alt"></i> Update</th>
+        </tr>
+       </thead>
+      <tbody>
+        <tr th:each="e : ${pastEvents}">
+          <td><a class="badge badge-info" th:href="@{/events/{id}(id=${e.id})}" th:text="${e.name}">Details</a></td>
+          <td th:text="${{e.date}}">Event date</td>
+          <td th:text="${{e.time}}">Event time</td>
+          <td><a th:text="${e.venue.name}" class="badge badge-secondary" th:href="@{/venues/{id}(id=${e.venue.id})}">Venue Name</a></td>
+          <td sec:authorize="isAuthenticated()">
+			    <a th:href="@{/events/edit/{id}(id=${e.id})}" class = "btn btn-info btn-sm">Update</a>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+	
+		<p>
+      <a sec:authorize="isAuthenticated()" class="btn btn-primary" role="button" th:href="@{/events/add_event}"><i class="fas fa-plus" aria-hidden="true"></i> New Event</a>
+      <a class="btn btn-primary" role="button" th:href="@{/}"><i class="fa fa-home" aria-hidden="true"></i> Home</a>
+    </p>
+
+    <div id="map" style="width:100%; height:500px; margin-bottom: 40px;"></div>
+	  <script th:inline="javascript">
+      mapboxgl.accessToken = 'pk.eyJ1IjoiYWx0YWlzYW5tIiwiYSI6ImNsZmF3bWl6NzA5MTgzcW4xMXRod2lkOHcifQ.xwkHeSIVcmGWcvMWr8DOfQ';
+      const map = new mapboxgl.Map({
+                  container: 'map', 
+                  style: 'mapbox://styles/mapbox/streets-v12', 
+                  center: [-2.240020314835789, 53.475353761665986],
+                  zoom: 13
+              });
+    var events = /*[[${futureEvents}]]*/;
+    var bounds = new mapboxgl.LngLatBounds();
+    var marks = [];  
+    events.forEach(function placeMarkers(e, index) {
+    		var time = e.time.slice(0, 5);
+        	var popup = new mapboxgl.Popup({ offset:35 }).setHTML('<h3>' + e.name + '</h3><br><p>' + 'Starts at: '+ time + '</p>');
+          marks.push(new mapboxgl.Marker().setLngLat([e.venue.longitude, e.venue.latitude]).setPopup(popup).addTo(map));
+          bounds.extend([e.venue.longitude, e.venue.latitude]);
+        })
+    map.addControl(new mapboxgl.NavigationControl());
+    map.fitBounds(bounds, { padding: 100 });
+    </script>   
+  </div>	 
+</body>
+</html>

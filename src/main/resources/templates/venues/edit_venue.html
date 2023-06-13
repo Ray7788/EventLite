@@ -1,0 +1,82 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+      layout:decorate="~{layouts/default}">
+<head>
+  <title>All events</title>
+</head>
+<body>
+  <div layout:fragment="content">
+  <h1 class = "text-center"> Update Venue </h1>
+	<form th:action="@{/venues/{id} (id=${venue.id})}" th:object = "${venue}" method="POST">
+		<div class ="form-group" th:classappend="${#fields.hasErrors('name')}? has-error">
+			<label> Venue Name </label>
+			<input
+			type = "text"
+			name = "name"
+			th:field = "*{name}"
+			id = "name"
+			class = "form-control"
+			placeholder="Enter Venue Name" 
+			/>
+			<p class="text-danger" th:if="${#fields.hasErrors('name')}" th:errors="*{name}">errors</p>
+		</div>
+		<div class ="form-group" th:classappend="${#fields.hasErrors('capacity')}? has-error">
+			<label> Venue Capacity </label>
+			<input
+			type = "number"
+			name = "capacity"
+			th:field = "*{capacity}"
+			id = "capacity"
+			class = "form-control"
+			placeholder="Enter Venue Capacity" 
+			/>
+			<p class="text-danger" th:if="${#fields.hasErrors('capacity')}" th:errors="*{capacity}">errors</p>
+		</div>
+		<div class ="form-group" th:classappend="${#fields.hasErrors('roadName')}? has-error">
+			<label> Venue Road Name </label>
+			<input
+			type = "text"
+			name = "roadName"
+			th:field = "*{roadName}"
+			id = "roadName"
+			class = "form-control"
+			placeholder="Enter Venue Road Name" 
+			/>
+			<p class="text-danger" th:if="${#fields.hasErrors('roadName')}" th:errors="*{roadName}">errors</p>
+		</div>
+		<div class ="form-group" th:classappend="${#fields.hasErrors('cityName')}? has-error">
+			<label> Venue City Name </label>
+			<input
+			type = "text"
+			name = "cityName"
+			th:field = "*{cityName}"
+			id = "cityName"
+			class = "form-control"
+			placeholder="Enter Venue City Name" 
+			/>
+			<p class="text-danger" th:if="${#fields.hasErrors('cityName')}" th:errors="*{cityName}">errors</p>	
+		</div>
+		<div class ="form-group" th:classappend="${#fields.hasErrors('postcode')}? has-error">
+			<label> Venue Postcode </label>
+			<input
+			type = "text"
+			name = "postcode"
+			th:field = "*{postcode}"
+			id = "postcode"
+			class = "form-control"
+			placeholder="Enter Venue Postcode" 
+			/>
+			<p class="text-danger" th:if="${#fields.hasErrors('postcode')}" th:errors="*{postcode}">errors</p>
+		</div>
+		<div class = "box-footer">
+			<button type="submit" class = "btn btn-primary">
+				Submit
+			</button>
+			 <a class="btn btn-warning" role="button" href="/venues"><i class="fa fa-ban" aria-hidden="true"></i> Cancel</a>
+		</div>
+	</form>
+  </div>
+</body>
+</html>

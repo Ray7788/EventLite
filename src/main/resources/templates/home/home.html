@@ -1,0 +1,69 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+      layout:decorate="~{layouts/default}">
+<head>
+  <title>EventLite: Home</title>
+</head>
+<body>
+  <div layout:fragment="content">    
+    <th:block th:if="${futureEvents}">
+    <h2>Upcoming Events</h2>
+    
+    <table class="table table-striped table-hover">
+      <thead>
+        <tr>
+          <th><i class="fas fa-bolt"></i> Event</th>
+          <th><i class="fas fa-map-marker-alt"></i> Venue</th>
+          <th><i class="fas fa-calendar"></i> Date</th>
+          <th><i class="fas fa-clock"></i> Time</th>
+          
+        </tr>
+      </thead>
+      <tbody>
+        <tr th:each="e, eStat : ${futureEvents}" th:if="${eStat.index<3}">
+          <td><a class="badge badge-info" th:href="@{/events/{id}(id=${e.id})}" th:text="${e.name}">Details</a></td>
+          <td><a class="badge badge-info" th:text="${(e.venue.name)}" th:href="@{/venues/{id}(id=${e.venue.id})}">Venue</a></td>
+          <td th:text="${{e.date}}">Event date</td>
+          <td th:text="${{e.time}}">Event time</td>
+        </tr>
+      </tbody>
+    </table>
+    </th:block>
+    
+   
+	<p>
+      <a class="btn btn-primary" role="button" th:href="@{events/}"><i class="fas fa-calendar" aria-hidden="true"></i> View All Events</a>
+    </p>
+     <th:block th:if="${popularVenues}">
+    
+    <h2>Popular Venues</h2>
+    
+    <table class="table table-striped table-hover">
+      <thead>
+        <tr>
+          <th><i class="fas fa-bolt"></i> Venue</th>
+          <th><i class="fas fa-map-marker-alt"></i> Address</th>
+          <th><i class="fas fa-warehouse"></i> Capacity</th>
+          
+          
+        </tr>
+      </thead>
+      <tbody>
+        <tr th:each="v : ${popularVenues}">
+          <td><a class="badge badge-info" th:text="${(v.name)}" th:href="@{/venues/{id}(id=${v.id})}">Venue</a></td>
+          <td th:text="${(v.address)}">Venue Address</td>
+          <td th:text="${(v.capacity)}">Venue Capacity</td>
+
+          </td>
+        </tr>
+      </tbody>
+    </table>
+    <p>
+      <a class="btn btn-primary" role="button" th:href="@{venues/}"><i class="fas fa-calendar" aria-hidden="true"></i> View All Venues</a>
+    </p>
+    
+  </div>
+</body>
+</html>
